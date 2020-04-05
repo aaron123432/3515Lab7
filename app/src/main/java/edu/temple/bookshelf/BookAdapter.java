@@ -1,40 +1,37 @@
-package edu.temple.bookshelf;
+package com.example.bookshelf;
 
 import android.content.Context;
-import android.database.DataSetObserver;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.zip.Inflater;
+import com.squareup.picasso.Picasso;
 
-import static java.security.AccessController.getContext;
+import java.util.ArrayList;
+import java.util.HashMap;
 
+public class BooksAdapter extends BaseAdapter {
 
-public class BookAdapter extends BaseAdapter {
-
-    String[] bookList;
-    String[] author;
-    private final int resourceId;
     Context context;
-    BookAdapter(String[] bookList, String[] author, int resourceId, Context context) {
-        this.bookList = bookList;
-        this.author = author;
-        this.resourceId = resourceId;
+    ArrayList<Book> books;
+
+    public BooksAdapter (Context context, ArrayList<Book> books) {
         this.context = context;
+        this.books = books;
     }
+
     @Override
     public int getCount() {
-        return bookList.length;
+        return books.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return position;
+        return books.get(position);
     }
 
     @Override
@@ -44,15 +41,25 @@ public class BookAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
+        TextView titleTextView, authorTextView;
+        ImageView imageView;
 
+        if (!(convertView instanceof LinearLayout)) {
+            /*
+            Inflate a predefined layout file that includes 2 text views.
+            We could do this in code, but this seems a little easier
+             */
+            convertView = LayoutInflater.from(context).inflate(R.layout.books_adapter_layout, parent, false);
+        }
 
-        View view = LayoutInflater.from(context).inflate(resourceId, null);
-        TextView bookName = view.findViewById(R.id.textView);
-        TextView authorName =  view.findViewById(R.id.textView2);
-        bookName.setText(bookList[position]);
-        authorName.setText(author[position]);
+        titleTextView = convertView.findViewById(R.id.titleTextView);
+        authorTextView = convertView.findViewById(R.id.authorTextView);
+        //imageView = convertView.findViewById(R.id.imageView);
 
-        return view;
+        titleTextView.setText(((Book)getItem(position)).getTitle());
+        authorTextView.setText(((Book)getItem(position)).getAuthor());
+        //Picasso.get().load(String.valueOf(books.get(position).getUrl())).into(imageView);
+
+        return convertView;
     }
-
 }
