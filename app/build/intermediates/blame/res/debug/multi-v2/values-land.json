@@ -1,0 +1,43 @@
+{
+    "logs": [
+        {
+            "outputFile": "C:\\Users\\xiaof\\AndroidStudioProjects\\BookShelf\\app\\build\\intermediates\\incremental\\mergeDebugResources\\merged.dir\\values-land\\values-land.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\xiaof\\AndroidStudioProjects\\BookShelf\\app\\src\\main\\res\\values-land\\layout.xml",
+                    "from": {
+                        "startLines": "3,2,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "98,57,141",
+                        "endColumns": "41,39,39",
+                        "endOffsets": "135,92,176"
+                    },
+                    "to": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,97,136",
+                        "endColumns": "41,38,39",
+                        "endOffsets": "92,131,171"
+                    }
+                },
+                {
+                    "source": "C:\\Users\\xiaof\\.gradle\\caches\\transforms-2\\files-2.1\\cb99e77638f7aea73fdfbb0798f74a2b\\appcompat-1.1.0\\res\\values-land\\values-land.xml",
+                    "from": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,125,196",
+                        "endColumns": "69,70,67",
+                        "endOffsets": "120,191,259"
+                    },
+                    "to": {
+                        "startLines": "5,6,7",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "176,246,317",
+                        "endColumns": "69,70,67",
+                        "endOffsets": "241,312,380"
+                    }
+                }
+            ]
+        }
+    ]
+}
