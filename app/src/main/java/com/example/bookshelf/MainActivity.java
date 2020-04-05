@@ -1,115 +1,58 @@
 package com.example.bookshelf;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.Toast;
-
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.Response.ErrorListener;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.widget.AdapterView;
+import android.widget.FrameLayout;
+import android.widget.ListView;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 
-import static com.android.volley.Response.*;
-
-public class MainActivity extends AppCompatActivity implements BookListFragment.BookSelectedInterface {
-
-    FragmentManager fm;
-    boolean twoPane;
-    BookDetailsFragment bookDetailsFragment;
-
-    EditText searchbar;
-    Button search;
-    String url;
-    RequestQueue requestQueue;
-    ArrayList<Book> books = new ArrayList<>();
+public class MainActivity extends AppCompatActivity {
+    private ListView view;
+    private BookShelf adapter;
+    private ArrayList<Books> list;
+    private boolean isPhone, isLanscape, isTablet;
+    private String key = "key";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main_activity);
 
-        requestQueue = Volley.newRequestQueue(this);
-        twoPane = findViewById(R.id.container2) != null;
-
-        fm = getSupportFragmentManager();
-        fm.beginTransaction()
-                .replace(R.id.container1, BookListFragment.newInstance(books))
-                .commit();
-
-        if (twoPane) {
-            bookDetailsFragment = new BookDetailsFragment();
-            fm.beginTransaction()
-                    .replace(R.id.container2, bookDetailsFragment)
-                    .commit();
-
+        Resources res =getResources();
+        isPhone = getResources().getBoolean(R.bool.isPhone);
+        isLanscape = getResources().getBoolean(R.bool.isLanscape);
+        isTablet = getResources().getBoolean(R.bool.isTablet);
+        view = (ListView)findViewById(R.id.listView);
+        list = new ArrayList<>();
+        for(int i = 1; i < 11; i++){
+            list.add(new Books("book" + i, "author" + i));
         }
-    }
 
-    private ArrayList<Book> getTestBooks() {
-        url = "https://kamorris.com/lab/abp/booksearch.php";
-        final JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(url, new Response.Listener<JSONArray>(){
-            @Override
-            public void onResponse(JSONArray response) {
-                    for(int i = 0; i < response.length(); i++){
-                        try {
-                            JSONObject jb = response.getJSONObject(i);
-                            int id = jb.getInt("book_id");
-                            String title = jb.getString("title");
-                            String author = jb.getString("author");
-                            String cover_url = jb.getString("cover_url");
-                            Book book = new Book(id, title, author,cover_url);
-                            books.add(book);
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
+        adapter = new BookShelf(getApplicationContext(), list);
+        view.setAdapter(adapter);
 
-            }
-        }, new Response.ErrorListener(){
+        view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onErrorResponse(VolleyError error) {
-                //Do nothing
-                Toast.makeText(MainActivity.this, "Something goes wrong", Toast.LENGTH_LONG);
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                if(isPhone){
+                    BlankFragment fragment = new BlankFragment();
+                    Books books = list.get(position);
+                    String value = books.getBook() + books.getAuthor();
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+                    Bundle bundle = new Bundle();
+                    bundle.putCharSequence(key, value);
+                    fragment.setArguments(bundle);
+                    transaction.add(R.id.fragment, fragment).addToBackStack(null).commit();
+                }
             }
         });
-
-        requestQueue.add(jsonArrayRequest);
-        return books;
-    }
-
-
-    @Override
-    public void bookSelected(int index) {
-
-        if (twoPane)
-            /*
-            Display selected book using previously attached fragment
-             */
-            bookDetailsFragment.displayBook(getTestBooks().get(index));
-        else {
-            /*
-            Display book using new fragment
-             */
-            fm.beginTransaction()
-                    .replace(R.id.container1, BookDetailsFragment.newInstance(getTestBooks().get(index)))
-                    // Transaction is reversible
-                    .addToBackStack(null)
-                    .commit();
-        }
     }
 }
