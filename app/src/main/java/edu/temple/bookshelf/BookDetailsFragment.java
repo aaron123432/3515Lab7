@@ -1,70 +1,79 @@
-package edu.temple.bookshelf;
+package com.example.bookshelf;
 
-
-import android.content.Context;
-import android.graphics.Color;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class BookDetailsFragment extends Fragment {
 
+    private static final String BOOK_KEY = "book";
+    private Book book;
 
-    View layout;
-    int isLand;
-//    BookDetailsFragment.Ending parentActivity;
+    TextView titleTextView, authorTextView;
+    ImageView imageView;
+    public BookDetailsFragment() {}
 
-    public static BookDetailsFragment newInstance (String colors, String  colorName,int isLand) {
+    public static BookDetailsFragment newInstance(Book book) {
         BookDetailsFragment fragment = new BookDetailsFragment();
-        Bundle bundle = new Bundle();
-        bundle.putString("book", colors);
-        bundle.putString("author", colorName);
-        bundle.putInt("land",isLand);
-        fragment.setArguments(bundle);
+        Bundle args = new Bundle();
 
+        /*
+         A HashMap implements the Serializable interface
+         therefore we can place a HashMap inside a bundle
+         by using that put() method.
+         */
+        args.putParcelable(BOOK_KEY, (Parcelable) book);
+        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            book = (Book) getArguments().getParcelable(BOOK_KEY);
+        }
+    }
 
-        if (context instanceof BookListFragment.ButtonClickedInterface) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_book_details, container, false);
 
-        } else {
-            throw new RuntimeException("Please Implement the ButtonClickedListener Interface!!!!!!!");
+        titleTextView = v.findViewById(R.id.titleTextView);
+        authorTextView = v.findViewById(R.id.authorTextView);
+        imageView = v.findViewById(R.id.imageView);
+
+        /*
+        Because this fragment can be created with or without
+        a book to display when attached, we need to make sure
+        we don't try to display a book if one isn't provided
+         */
+        if (book != null) {
+            displayBook(book);
+        }
+        return v;
+    }
+
+    /*
+    This method is used both internally and externally (from the activity)
+    to display a book
+     */
+    public void displayBook(Book book) {
+            titleTextView .setText(String.valueOf(book.getTitle()));
+            authorTextView .setText(String.valueOf(book.getAuthor()));
+            //Picasso.get().load(String.valueOf(book.get(i).getUrl())).into(imageView);
         }
 
     }
 
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        isLand = getArguments().getInt("land");
 
-        layout = inflater.inflate(R.layout.book_details_fragment, container, false);
-        ((TextView)layout.findViewById(R.id.textView3)).setText(getArguments().getString("book"));
-        ((TextView)layout.findViewById(R.id.textView4)).setText(getArguments().getString("author"));
-
-        return layout;
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-//        parentActivity.ending();
-    }
-//    interface Ending {
-//        public void ending();
-//    }
-}
